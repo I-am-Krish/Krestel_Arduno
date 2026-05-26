@@ -123,7 +123,3 @@ Kestrel-Arduino is 100% wire-compatible with the PC reference implementation (`K
 - The `gcs_receiver` PC binary
 - The `uav_simulator` PC binary
 - Any other Kestrel implementation
-
-## License
-
-Proprietary — Winspann Technologies. All rights reserved.
