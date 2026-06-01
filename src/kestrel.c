@@ -1,28 +1,8 @@
-/* =========================================================================
- * Arduino / Desktop platform split
- * ========================================================================= */
-#ifdef ARDUINO
-  /* Arduino: pull in the board-specific config shim first */
-  #include "kestrel_arduino.h"
-#else
-  /* Desktop: stdio + stdlib are safe to use */
-  #include <stdio.h>  /* For debug printf */
-  #include <stdlib.h> /* For abort()      */
-#endif
-
-#include "kestrel_core.h"
+#include "kestrel.h"
 #include <string.h>
-
-/* Crypto: include monocypher only when not disabled */
-#ifndef KS_CRYPTO_DISABLED
-  #include "monocypher.h"
-#else
-  /* Stub out crypto_wipe when monocypher is excluded */
-  static inline void crypto_wipe(void *secret, size_t size) {
-      volatile uint8_t *p = (volatile uint8_t *)secret;
-      while (size--) *p++ = 0;
-  }
-#endif
+#include <stdio.h>  /* For debug printf */
+#include <stdlib.h> /* For abort() */
+#include "monocypher.h"
 
 /**
  * Kestrel Protocol - ChaCha20-Poly1305 AEAD Implementation
@@ -47,14 +27,12 @@
  */
 
 /* Platform-specific includes for random number generation */
-#if defined(ARDUINO)
-  /* Arduino: no POSIX headers — stubs below */
-#elif defined(_WIN32)
-  #include <windows.h>
-  #include <wincrypt.h>
+#ifdef _WIN32
+#include <windows.h>
+#include <wincrypt.h>
 #else
-  #include <fcntl.h>
-  #include <unistd.h>
+#include <fcntl.h>
+#include <unistd.h>
 #endif
 
 /* --- CRC-16/MCRF4XX Implementation --- */
@@ -82,16 +60,41 @@ void ks_crc_accumulate(uint8_t data, uint16_t *crcAccum)
  * 0..9, implying HEARTBEAT was at index 0, but the lookup uses msg_id directly).
  * Comments below reflect the TRUE msg_id-to-index mapping. */
 static const uint8_t ks_crc_seed_table[] = {
-    /* idx[0] msg_id=0x000 (unused — direct-index padding)         */  0,
-    /* idx[1] KS_MSG_HEARTBEAT  0x001  v2 10-byte DO-362A format   */ 117, /* was 39 — changed to signal 3-byte failsafe extension */
-    /* idx[2] KS_MSG_ATTITUDE   0x002                              */  24,
-    /* idx[3] KS_MSG_GPS_RAW    0x003                              */ 154,
-    /* idx[4] KS_MSG_BATTERY    0x004                              */  89,
-    /* idx[5] KS_MSG_RC_INPUT   0x005                              */   0,
-    /* idx[6] KS_MSG_CMD        0x006                              */ 217,
-    /* idx[7] KS_MSG_CMD_ACK    0x007                              */ 143,
-    /* idx[8] KS_MSG_MODE_CHANGE  0x008                            */ 178,
-    /* idx[9] KS_MSG_MISSION_ITEM 0x009                            */  62,
+    /* idx[0x000] (unused — direct-index padding)                  */   0,
+    /* idx[0x001] KS_MSG_HEARTBEAT   (v1.2 DO-362A failsafe ext)   */ 117,
+    /* idx[0x002] KS_MSG_ATTITUDE                                  */  24,
+    /* idx[0x003] KS_MSG_GPS_RAW                                   */ 154,
+    /* idx[0x004] KS_MSG_BATTERY                                   */  89,
+    /* idx[0x005] KS_MSG_RC_INPUT                                  */   0,
+    /* idx[0x006] KS_MSG_CMD                                       */ 217,
+    /* idx[0x007] KS_MSG_CMD_ACK                                   */ 143,
+    /* idx[0x008] KS_MSG_MODE_CHANGE                               */ 178,
+    /* idx[0x009] KS_MSG_MISSION_ITEM                              */  62,
+    /* idx[0x00A] KS_MSG_KEY_EXCHANGE                              */ 211,
+    /* idx[0x00B] KS_MSG_KEY_EXCHANGE_ACK                          */  93,
+    /* idx[0x00C] (reserved)                                       */   0,
+    /* idx[0x00D] (reserved)                                       */   0,
+    /* idx[0x00E] (reserved)                                       */   0,
+    /* idx[0x00F] (reserved)                                       */   0,
+    /* idx[0x010] KS_MSG_PARAM_REQUEST_READ  (v1.3)                */  55,
+    /* idx[0x011] KS_MSG_PARAM_REQUEST_LIST  (v1.3)                */  86,
+    /* idx[0x012] KS_MSG_LINK_STATUS   (DO-362A compliance)        */ 117,
+    /* idx[0x013] KS_MSG_PARAM_VALUE         (v1.3)                */ 148,
+    /* idx[0x014] KS_MSG_PARAM_SET           (v1.3)                */ 179,
+    /* idx[0x015] KS_MSG_LOG_REQUEST_LIST    (v1.3)                */ 210,
+    /* idx[0x016] KS_MSG_LOG_ENTRY           (v1.3)                */ 241,
+    /* idx[0x017] KS_MSG_LOG_REQUEST_DATA    (v1.3)                */  16,
+    /* idx[0x018] KS_MSG_LOG_DATA            (v1.3)                */  47,
+    /* idx[0x019] KS_MSG_LOG_ERASE           (v1.3)                */  78,
+    /* idx[0x01A] KS_MSG_STATUSTEXT          (v1.3)                */ 109,
+    /* idx[0x01B] KS_MSG_SYS_STATUS          (v1.3)                */ 140,
+    /* idx[0x01C] KS_MSG_VFR_HUD             (v1.3)                */ 171,
+    /* idx[0x01D] KS_MSG_NAV_CONTROLLER      (v1.3)                */ 202,
+    /* idx[0x01E] KS_MSG_MISSION_COUNT       (v1.3)                */ 233,
+    /* idx[0x01F] KS_MSG_MISSION_REQUEST     (v1.3)                */   8,
+    /* idx[0x020] KS_MSG_NPNT_PA   (DGCA NPNT compliance)          */  39,
+    /* idx[0x021] KS_MSG_NPNT_STATUS (DGCA NPNT compliance)        */  70,
+    /* idx[0x022] KS_MSG_MISSION_ACK         (v1.3)                */ 100,
 };
 #define KS_CRC_SEED_TABLE_SIZE (sizeof(ks_crc_seed_table) / sizeof(ks_crc_seed_table[0]))
 
@@ -702,6 +705,381 @@ int ks_deserialize_mission_item(ks_mission_item_t *item, const uint8_t *in)
     return 20;
 }
 
+/* ==========================================================================
+ * v1.3 GCS PARITY SERIALIZERS — Parameter Protocol
+ * ========================================================================== */
+
+/* KS_MSG_PARAM_REQUEST_READ (0x010) — 18 bytes
+ * Wire: [0..15]=param_id (16 bytes, null-padded ASCII) [16..17]=param_index (int16 LE) */
+int ks_serialize_param_request_read(const ks_param_request_read_t *req, uint8_t *out)
+{
+    if (!req || !out) return KS_ERR_NULL_POINTER;
+    memcpy(out, req->param_id, 16);
+    out[16] = (uint8_t)((uint16_t)req->param_index & 0xFF);
+    out[17] = (uint8_t)(((uint16_t)req->param_index >> 8) & 0xFF);
+    return 18;
+}
+
+int ks_deserialize_param_request_read(ks_param_request_read_t *req, const uint8_t *in)
+{
+    if (!req || !in) return KS_ERR_NULL_POINTER;
+    memcpy(req->param_id, in, 16);
+    req->param_id[15] = '\0'; /* Ensure null-termination */
+    req->param_index = (int16_t)((uint16_t)in[16] | ((uint16_t)in[17] << 8));
+    return 18;
+}
+
+/* KS_MSG_PARAM_VALUE (0x013) — 25 bytes
+ * Wire: [0..15]=param_id [16..19]=param_value (float32 LE) [20]=param_type
+ *       [21..22]=param_count (uint16 LE) [23..24]=param_index (uint16 LE) */
+int ks_serialize_param_value(const ks_param_value_t *val, uint8_t *out)
+{
+    if (!val || !out) return KS_ERR_NULL_POINTER;
+    memcpy(out, val->param_id, 16);
+    pack_float(&out[16], val->param_value);
+    out[20] = val->param_type;
+    pack_uint16(&out[21], val->param_count);
+    pack_uint16(&out[23], val->param_index);
+    return 25;
+}
+
+int ks_deserialize_param_value(ks_param_value_t *val, const uint8_t *in)
+{
+    if (!val || !in) return KS_ERR_NULL_POINTER;
+    memcpy(val->param_id, in, 16);
+    val->param_id[15] = '\0';
+    val->param_value  = unpack_float(&in[16]);
+    val->param_type   = in[20];
+    val->param_count  = unpack_uint16(&in[21]);
+    val->param_index  = unpack_uint16(&in[23]);
+    return 25;
+}
+
+/* KS_MSG_PARAM_SET (0x014) — 21 bytes
+ * Wire: [0..15]=param_id [16..19]=param_value (float32 LE) [20]=param_type */
+int ks_serialize_param_set(const ks_param_set_t *set, uint8_t *out)
+{
+    if (!set || !out) return KS_ERR_NULL_POINTER;
+    memcpy(out, set->param_id, 16);
+    pack_float(&out[16], set->param_value);
+    out[20] = set->param_type;
+    return 21;
+}
+
+int ks_deserialize_param_set(ks_param_set_t *set, const uint8_t *in)
+{
+    if (!set || !in) return KS_ERR_NULL_POINTER;
+    memcpy(set->param_id, in, 16);
+    set->param_id[15] = '\0';
+    set->param_value  = unpack_float(&in[16]);
+    set->param_type   = in[20];
+    return 21;
+}
+
+/* ==========================================================================
+ * v1.3 GCS PARITY SERIALIZERS — Log Protocol
+ * ========================================================================== */
+
+/* KS_MSG_LOG_REQUEST_LIST (0x015) — 4 bytes
+ * Wire: [0..1]=start (uint16 LE) [2..3]=end (uint16 LE) */
+int ks_serialize_log_request_list(const ks_log_request_list_t *req, uint8_t *out)
+{
+    if (!req || !out) return KS_ERR_NULL_POINTER;
+    pack_uint16(&out[0], req->start);
+    pack_uint16(&out[2], req->end);
+    return 4;
+}
+
+int ks_deserialize_log_request_list(ks_log_request_list_t *req, const uint8_t *in)
+{
+    if (!req || !in) return KS_ERR_NULL_POINTER;
+    req->start = unpack_uint16(&in[0]);
+    req->end   = unpack_uint16(&in[2]);
+    return 4;
+}
+
+/* KS_MSG_LOG_ENTRY (0x016) — 14 bytes
+ * Wire: [0..1]=id [2..3]=num_logs [4..5]=last_log_num
+ *       [6..9]=time_utc (uint32 LE) [10..13]=size (uint32 LE) */
+int ks_serialize_log_entry(const ks_log_entry_t *entry, uint8_t *out)
+{
+    if (!entry || !out) return KS_ERR_NULL_POINTER;
+    pack_uint16(&out[0], entry->id);
+    pack_uint16(&out[2], entry->num_logs);
+    pack_uint16(&out[4], entry->last_log_num);
+    out[6]  = (uint8_t)(entry->time_utc);
+    out[7]  = (uint8_t)(entry->time_utc >> 8);
+    out[8]  = (uint8_t)(entry->time_utc >> 16);
+    out[9]  = (uint8_t)(entry->time_utc >> 24);
+    out[10] = (uint8_t)(entry->size);
+    out[11] = (uint8_t)(entry->size >> 8);
+    out[12] = (uint8_t)(entry->size >> 16);
+    out[13] = (uint8_t)(entry->size >> 24);
+    return 14;
+}
+
+int ks_deserialize_log_entry(ks_log_entry_t *entry, const uint8_t *in)
+{
+    if (!entry || !in) return KS_ERR_NULL_POINTER;
+    entry->id           = unpack_uint16(&in[0]);
+    entry->num_logs     = unpack_uint16(&in[2]);
+    entry->last_log_num = unpack_uint16(&in[4]);
+    entry->time_utc     = (uint32_t)in[6]  | ((uint32_t)in[7]  << 8)
+                        | ((uint32_t)in[8]  << 16) | ((uint32_t)in[9] << 24);
+    entry->size         = (uint32_t)in[10] | ((uint32_t)in[11] << 8)
+                        | ((uint32_t)in[12] << 16) | ((uint32_t)in[13] << 24);
+    return 14;
+}
+
+/* KS_MSG_LOG_REQUEST_DATA (0x017) — 10 bytes
+ * Wire: [0..1]=id (uint16 LE) [2..5]=offset (uint32 LE) [6..9]=count (uint32 LE) */
+int ks_serialize_log_request_data(const ks_log_request_data_t *req, uint8_t *out)
+{
+    if (!req || !out) return KS_ERR_NULL_POINTER;
+    pack_uint16(&out[0], req->id);
+    out[2] = (uint8_t)(req->offset);
+    out[3] = (uint8_t)(req->offset >> 8);
+    out[4] = (uint8_t)(req->offset >> 16);
+    out[5] = (uint8_t)(req->offset >> 24);
+    out[6] = (uint8_t)(req->count);
+    out[7] = (uint8_t)(req->count >> 8);
+    out[8] = (uint8_t)(req->count >> 16);
+    out[9] = (uint8_t)(req->count >> 24);
+    return 10;
+}
+
+int ks_deserialize_log_request_data(ks_log_request_data_t *req, const uint8_t *in)
+{
+    if (!req || !in) return KS_ERR_NULL_POINTER;
+    req->id     = unpack_uint16(&in[0]);
+    req->offset = (uint32_t)in[2] | ((uint32_t)in[3] << 8)
+                | ((uint32_t)in[4] << 16) | ((uint32_t)in[5] << 24);
+    req->count  = (uint32_t)in[6] | ((uint32_t)in[7] << 8)
+                | ((uint32_t)in[8] << 16) | ((uint32_t)in[9] << 24);
+    return 10;
+}
+
+/* KS_MSG_LOG_DATA (0x018) — 7 + count bytes (max 97 bytes total)
+ * Wire: [0..1]=id [2..5]=offset (uint32 LE) [6]=count [7..6+count]=data */
+int ks_serialize_log_data(const ks_log_data_t *data, uint8_t *out)
+{
+    if (!data || !out) return KS_ERR_NULL_POINTER;
+    uint8_t cnt = data->count > 90 ? 90 : data->count; /* Clamp to max 90 bytes */
+    pack_uint16(&out[0], data->id);
+    out[2] = (uint8_t)(data->offset);
+    out[3] = (uint8_t)(data->offset >> 8);
+    out[4] = (uint8_t)(data->offset >> 16);
+    out[5] = (uint8_t)(data->offset >> 24);
+    out[6] = cnt;
+    memcpy(&out[7], data->data, cnt);
+    return 7 + cnt;
+}
+
+int ks_deserialize_log_data(ks_log_data_t *data, const uint8_t *in)
+{
+    if (!data || !in) return KS_ERR_NULL_POINTER;
+    data->id     = unpack_uint16(&in[0]);
+    data->offset = (uint32_t)in[2] | ((uint32_t)in[3] << 8)
+                 | ((uint32_t)in[4] << 16) | ((uint32_t)in[5] << 24);
+    data->count  = in[6];
+    if (data->count > 90) data->count = 90; /* Clamp for safety */
+    memcpy(data->data, &in[7], data->count);
+    return 7 + data->count;
+}
+
+/* ==========================================================================
+ * v1.3 GCS PARITY SERIALIZERS — Status & HUD
+ * ========================================================================== */
+
+/* KS_MSG_STATUSTEXT (0x01A) — 51 bytes
+ * Wire: [0]=severity [1..50]=text (50 bytes, null-terminated ASCII) */
+int ks_serialize_statustext(const ks_statustext_t *st, uint8_t *out)
+{
+    if (!st || !out) return KS_ERR_NULL_POINTER;
+    out[0] = st->severity;
+    memcpy(&out[1], st->text, 50);
+    out[50] = '\0'; /* Ensure null-termination on wire */
+    return 51;
+}
+
+int ks_deserialize_statustext(ks_statustext_t *st, const uint8_t *in)
+{
+    if (!st || !in) return KS_ERR_NULL_POINTER;
+    st->severity = in[0];
+    memcpy(st->text, &in[1], 49);
+    st->text[49] = '\0'; /* Ensure null-termination */
+    return 51;
+}
+
+/* KS_MSG_SYS_STATUS (0x01B) — 18 bytes
+ * Wire: [0..3]=sensors_present [4..7]=sensors_enabled [8..11]=sensors_health
+ *       [12..13]=load [14..15]=voltage_battery [16..17]=current_battery
+ *       — NOTE: battery_remaining and drop_rate_comm packed into [17] and [18] */
+int ks_serialize_sys_status(const ks_sys_status_t *sys, uint8_t *out)
+{
+    if (!sys || !out) return KS_ERR_NULL_POINTER;
+    out[0]  = (uint8_t)(sys->sensors_present);
+    out[1]  = (uint8_t)(sys->sensors_present >> 8);
+    out[2]  = (uint8_t)(sys->sensors_present >> 16);
+    out[3]  = (uint8_t)(sys->sensors_present >> 24);
+    out[4]  = (uint8_t)(sys->sensors_enabled);
+    out[5]  = (uint8_t)(sys->sensors_enabled >> 8);
+    out[6]  = (uint8_t)(sys->sensors_enabled >> 16);
+    out[7]  = (uint8_t)(sys->sensors_enabled >> 24);
+    out[8]  = (uint8_t)(sys->sensors_health);
+    out[9]  = (uint8_t)(sys->sensors_health >> 8);
+    out[10] = (uint8_t)(sys->sensors_health >> 16);
+    out[11] = (uint8_t)(sys->sensors_health >> 24);
+    pack_uint16(&out[12], sys->load);
+    pack_uint16(&out[14], sys->voltage_battery);
+    pack_int16(&out[16],  sys->current_battery);
+    out[18] = (uint8_t)sys->battery_remaining;
+    pack_uint16(&out[19], sys->drop_rate_comm);
+    return 21;
+}
+
+int ks_deserialize_sys_status(ks_sys_status_t *sys, const uint8_t *in)
+{
+    if (!sys || !in) return KS_ERR_NULL_POINTER;
+    sys->sensors_present  = (uint32_t)in[0]  | ((uint32_t)in[1]  << 8)
+                          | ((uint32_t)in[2]  << 16) | ((uint32_t)in[3] << 24);
+    sys->sensors_enabled  = (uint32_t)in[4]  | ((uint32_t)in[5]  << 8)
+                          | ((uint32_t)in[6]  << 16) | ((uint32_t)in[7] << 24);
+    sys->sensors_health   = (uint32_t)in[8]  | ((uint32_t)in[9]  << 8)
+                          | ((uint32_t)in[10] << 16) | ((uint32_t)in[11] << 24);
+    sys->load             = unpack_uint16(&in[12]);
+    sys->voltage_battery  = unpack_uint16(&in[14]);
+    sys->current_battery  = unpack_int16(&in[16]);
+    sys->battery_remaining= (int8_t)in[18];
+    sys->drop_rate_comm   = unpack_uint16(&in[19]);
+    return 21;
+}
+
+/* KS_MSG_VFR_HUD (0x01C) — 20 bytes
+ * Wire: [0..3]=airspeed [4..7]=groundspeed [8..9]=heading (int16)
+ *       [10..11]=throttle [12..15]=alt [16..19]=climb */
+int ks_serialize_vfr_hud(const ks_vfr_hud_t *hud, uint8_t *out)
+{
+    if (!hud || !out) return KS_ERR_NULL_POINTER;
+    pack_float(&out[0],  hud->airspeed);
+    pack_float(&out[4],  hud->groundspeed);
+    pack_int16(&out[8],  hud->heading);
+    pack_uint16(&out[10], hud->throttle);
+    pack_float(&out[12], hud->alt);
+    pack_float(&out[16], hud->climb);
+    return 20;
+}
+
+int ks_deserialize_vfr_hud(ks_vfr_hud_t *hud, const uint8_t *in)
+{
+    if (!hud || !in) return KS_ERR_NULL_POINTER;
+    hud->airspeed    = unpack_float(&in[0]);
+    hud->groundspeed = unpack_float(&in[4]);
+    hud->heading     = unpack_int16(&in[8]);
+    hud->throttle    = unpack_uint16(&in[10]);
+    hud->alt         = unpack_float(&in[12]);
+    hud->climb       = unpack_float(&in[16]);
+    return 20;
+}
+
+/* KS_MSG_NAV_CONTROLLER (0x01D) — 26 bytes
+ * Wire: [0..3]=nav_roll [4..7]=nav_pitch [8..9]=nav_bearing (int16)
+ *       [10..11]=target_bearing (int16) [12..13]=wp_dist (uint16)
+ *       [14..17]=alt_error [18..21]=aspd_error [22..25]=xtrack_error */
+int ks_serialize_nav_controller(const ks_nav_controller_t *nav, uint8_t *out)
+{
+    if (!nav || !out) return KS_ERR_NULL_POINTER;
+    pack_float(&out[0],  nav->nav_roll);
+    pack_float(&out[4],  nav->nav_pitch);
+    pack_int16(&out[8],  nav->nav_bearing);
+    pack_int16(&out[10], nav->target_bearing);
+    pack_uint16(&out[12], nav->wp_dist);
+    pack_float(&out[14], nav->alt_error);
+    pack_float(&out[18], nav->aspd_error);
+    pack_float(&out[22], nav->xtrack_error);
+    return 26;
+}
+
+int ks_deserialize_nav_controller(ks_nav_controller_t *nav, const uint8_t *in)
+{
+    if (!nav || !in) return KS_ERR_NULL_POINTER;
+    nav->nav_roll      = unpack_float(&in[0]);
+    nav->nav_pitch     = unpack_float(&in[4]);
+    nav->nav_bearing   = unpack_int16(&in[8]);
+    nav->target_bearing= unpack_int16(&in[10]);
+    nav->wp_dist       = unpack_uint16(&in[12]);
+    nav->alt_error     = unpack_float(&in[14]);
+    nav->aspd_error    = unpack_float(&in[18]);
+    nav->xtrack_error  = unpack_float(&in[22]);
+    return 26;
+}
+
+/* ==========================================================================
+ * v1.3 GCS PARITY SERIALIZERS — Mission Protocol Completion
+ * ========================================================================== */
+
+/* KS_MSG_MISSION_COUNT (0x01E) — 4 bytes
+ * Wire: [0..1]=count (uint16 LE) [2]=target_sys [3]=target_comp */
+int ks_serialize_mission_count(const ks_mission_count_t *cnt, uint8_t *out)
+{
+    if (!cnt || !out) return KS_ERR_NULL_POINTER;
+    pack_uint16(&out[0], cnt->count);
+    out[2] = cnt->target_sys;
+    out[3] = cnt->target_comp;
+    return 4;
+}
+
+int ks_deserialize_mission_count(ks_mission_count_t *cnt, const uint8_t *in)
+{
+    if (!cnt || !in) return KS_ERR_NULL_POINTER;
+    cnt->count       = unpack_uint16(&in[0]);
+    cnt->target_sys  = in[2];
+    cnt->target_comp = in[3];
+    return 4;
+}
+
+/* KS_MSG_MISSION_REQUEST (0x01F) — 4 bytes
+ * Wire: [0..1]=seq (uint16 LE) [2]=target_sys [3]=target_comp */
+int ks_serialize_mission_request(const ks_mission_request_t *req, uint8_t *out)
+{
+    if (!req || !out) return KS_ERR_NULL_POINTER;
+    pack_uint16(&out[0], req->seq);
+    out[2] = req->target_sys;
+    out[3] = req->target_comp;
+    return 4;
+}
+
+int ks_deserialize_mission_request(ks_mission_request_t *req, const uint8_t *in)
+{
+    if (!req || !in) return KS_ERR_NULL_POINTER;
+    req->seq         = unpack_uint16(&in[0]);
+    req->target_sys  = in[2];
+    req->target_comp = in[3];
+    return 4;
+}
+
+/* KS_MSG_MISSION_ACK (0x022) — 4 bytes
+ * Wire: [0]=target_sys [1]=target_comp [2]=type [3]=reserved */
+int ks_serialize_mission_ack(const ks_mission_ack_t *ack, uint8_t *out)
+{
+    if (!ack || !out) return KS_ERR_NULL_POINTER;
+    out[0] = ack->target_sys;
+    out[1] = ack->target_comp;
+    out[2] = ack->type;
+    out[3] = 0; /* reserved */
+    return 4;
+}
+
+int ks_deserialize_mission_ack(ks_mission_ack_t *ack, const uint8_t *in)
+{
+    if (!ack || !in) return KS_ERR_NULL_POINTER;
+    ack->target_sys  = in[0];
+    ack->target_comp = in[1];
+    ack->type        = in[2];
+    ack->reserved    = 0;
+    return 4;
+}
+
 /* --- DGCA NPNT Permission Artifact Serialization --- */
 /* Wire layout (82 bytes):
  *   [0..63]  signature (Ed25519, 64 bytes)
@@ -961,72 +1339,45 @@ int ks_reassembly_add(ks_reassembly_ctx_t *ctx, const ks_header_t *hdr,
 
 /* --- Nonce Management Implementation --- */
 
-/* Platform-specific secure random number generation.
- *
- * Three backends, selected at compile time:
- *   ARDUINO + ESP32         : esp_random() (hardware TRNG)
- *   ARDUINO + other boards  : weak entropy from micros() + ADC noise
- *                             (defined in kestrel_arduino.h as ks_arduino_entropy)
- *   Windows (PC build)      : CryptGenRandom
- *   Linux/macOS (PC build)  : /dev/urandom
- */
+/* Platform-specific secure random number generation */
 static int ks_get_random_u32(uint32_t *out_val)
 {
+#ifdef _WIN32
+    /* Windows CryptGenRandom */
+    HCRYPTPROV hProvider = 0;
+    
     if (!out_val) return -1;
     *out_val = 0;
 
-#if defined(ARDUINO)
-    /* ---------------------------------------------------------------
-     * Arduino path
-     * ------------------------------------------------------------- */
-  #if defined(ESP32)
-    /* ESP32 hardware true-random number generator (best quality) */
-    *out_val = esp_random();
-    return 0;
-  #elif defined(ARDUINO_ARCH_RP2040)
-    /* RP2040 uses the rosc ring oscillator as entropy source */
-    #include <hardware/sync.h>
-    #include <hardware/structs/rosc.h>
-    uint32_t v = 0;
-    for (int i = 0; i < 32; i++) {
-        v = (v << 1) | (rosc_hw->randombit & 1);
-        __asm volatile("nop");
-    }
-    *out_val = v;
-    return 0;
-  #else
-    /* Fallback: weak entropy from timer + ADC noise.
-     * NOT cryptographically secure — suitable only for AVR no-crypto mode.
-     * For SAMD/mbed: override by defining KS_PLATFORM_RANDOM(out) before
-     * including Kestrel.h, or use ks_nonce_set_counter() at boot with a
-     * value loaded from EEPROM. */
-    *out_val = ks_arduino_entropy();
-    return 0;
-  #endif /* Arduino board variants */
-
-#elif defined(_WIN32)
-    /* ---------------------------------------------------------------
-     * Windows (PC / desktop build)
-     * ------------------------------------------------------------- */
-    HCRYPTPROV hProvider = 0;
     if (!CryptAcquireContext(&hProvider, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
-        return -1;
-    if (!CryptGenRandom(hProvider, sizeof(uint32_t), (BYTE *)out_val)) {
+    {
+        return -1; // Fail instead of fallback
+    }
+    if (!CryptGenRandom(hProvider, sizeof(uint32_t), (BYTE *)out_val))
+    {
         CryptReleaseContext(hProvider, 0);
-        return -1;
+        return -1; // Fail instead of fallback
     }
     CryptReleaseContext(hProvider, 0);
     return 0;
-
 #else
-    /* ---------------------------------------------------------------
-     * Linux / macOS / POSIX (PC / desktop build)
-     * ------------------------------------------------------------- */
+    /* Linux/Unix /dev/urandom */
     int fd = open("/dev/urandom", O_RDONLY);
-    if (fd < 0) return -1;
+    
+    if (!out_val) return -1;
+    *out_val = 0;
+
+    if (fd < 0)
+    {
+        return -1; // Fail instead of fallback
+    }
     ssize_t n = read(fd, out_val, sizeof(uint32_t));
     close(fd);
-    return (n == (ssize_t)sizeof(uint32_t)) ? 0 : -1;
+    if (n != (ssize_t)sizeof(uint32_t))
+    {
+        return -1; // Fail instead of fallback
+    }
+    return 0;
 #endif
 }
 
@@ -1174,16 +1525,6 @@ static int kestrel_pack_internal(uint8_t *buf, const ks_header_t *h,
     // 2. Encryption & Payload
     if (hout.encrypted)
     {
-#ifdef KS_CRYPTO_DISABLED
-        /* Crypto is disabled on this Arduino board (AVR/low-RAM target).
-         * Fall back to plaintext — flag the encrypted bit off so the receiver
-         * does not attempt AEAD decryption. This keeps the wire protocol
-         * valid; both sides must run matching no-crypto builds. */
-        hout.encrypted = false;
-        /* Re-encode base header with updated encrypted=false flag */
-        ks_encode_base_header(buf, &hout);
-        memcpy(buf + header_len, payload, hout.payload_len);
-#else
         /* Full ChaCha20-Poly1305 AEAD Implementation */
         /* Use header as Additional Authenticated Data (AAD) to prevent tampering */
 
@@ -1198,6 +1539,7 @@ static int kestrel_pack_internal(uint8_t *buf, const ks_header_t *h,
         /* crypto_aead_lock(mac, ciphertext, key, nonce, ad, ad_size, plaintext, text_size)
            - Encrypts payload and generates MAC over both header (AAD) and ciphertext
            - MAC protects against both ciphertext and header manipulation */
+
         crypto_aead_lock(buf + header_len,  /* Output: ciphertext */
                          mac,               /* Output: MAC tag */
                          key_32b,           /* 256-bit key */
@@ -1209,7 +1551,6 @@ static int kestrel_pack_internal(uint8_t *buf, const ks_header_t *h,
 
         /* Append 16-byte Poly1305 MAC tag after ciphertext */
         memcpy(buf + header_len + hout.payload_len, mac, KS_MAC_TAG_SIZE);
-#endif /* KS_CRYPTO_DISABLED */
     }
     else
     {
@@ -1392,14 +1733,6 @@ int ks_parse_char(ks_parser_t *p, uint8_t c, const uint8_t *key_32b)
                     return KS_ERR_NO_KEY;
                 }
 
-#ifdef KS_CRYPTO_DISABLED
-                /* No-crypto build: treat the payload as plaintext.
-                 * Both sender and receiver must use matching no-crypto builds.
-                 * The encrypted flag is cleared by the sender in this mode, so
-                 * this branch should rarely trigger in practice. Treat it as
-                 * plaintext passthrough so the link stays alive. */
-                memcpy(p->payload, p->buffer + header_size, p->header.payload_len);
-#else
                 /* Full ChaCha20-Poly1305 AEAD Verification */
 
                 /* Monocypher AEAD requires 24-byte nonce (192 bits) */
@@ -1409,7 +1742,8 @@ int ks_parse_char(ks_parser_t *p, uint8_t c, const uint8_t *key_32b)
                 /* Read 16-byte MAC tag from end of encrypted section */
                 uint8_t *mac_tag = p->buffer + header_size + p->header.payload_len;
 
-                /* crypto_aead_unlock returns 0 on success, -1 on auth failure */
+                /* crypto_aead_unlock(plaintext, mac, key, nonce, ad, ad_size, ciphertext, text_size)
+                   Returns 0 on success (MAC verified), -1 on authentication failure */
                 int auth_result = crypto_aead_unlock(
                     p->payload,              /* Output: plaintext */
                     mac_tag,                 /* Input: 16-byte MAC tag */
@@ -1427,7 +1761,6 @@ int ks_parse_char(ks_parser_t *p, uint8_t c, const uint8_t *key_32b)
                     p->error_count++;
                     return KS_ERR_MAC_VERIFICATION;
                 }
-#endif /* KS_CRYPTO_DISABLED */
             }
             else
             {

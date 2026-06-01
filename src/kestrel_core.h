@@ -6,15 +6,7 @@
 #include <stddef.h>
 
 /* Protocol Constants */
-/* KS_MAX_PAYLOAD_SIZE controls parser buffer allocation.
- * It can be overridden BEFORE including this header (e.g. by kestrel_arduino.h):
- *   AVR (Uno/Mega)  : 64  bytes  — very tight RAM, no crypto
- *   ESP32 / RP2040  : 256 bytes  — generous RAM, full crypto
- *   PC / Desktop    : 512 bytes  — no constraint
- * Never set below 32 — the minimum heartbeat packet won't fit. */
-#ifndef KS_MAX_PAYLOAD_SIZE
-#define KS_MAX_PAYLOAD_SIZE 512
-#endif
+#define KS_MAX_PAYLOAD_SIZE 512 /* Maximum payload size in parser buffer */
 #define KS_MAC_TAG_SIZE 16      /* Poly1305 MAC tag size (full 128-bit) */
 
 /* Error Codes */
@@ -98,19 +90,41 @@ typedef struct
     uint8_t nonce[8];
 } ks_header_t;
 
-/* Message IDs */
-#define KS_MSG_HEARTBEAT 0x001
-#define KS_MSG_ATTITUDE 0x002
-#define KS_MSG_GPS_RAW 0x003
-#define KS_MSG_BATTERY 0x004
-#define KS_MSG_RC_INPUT 0x005
-#define KS_MSG_CMD 0x006
-#define KS_MSG_CMD_ACK 0x007
-#define KS_MSG_MODE_CHANGE 0x008
-#define KS_MSG_MISSION_ITEM 0x009
-#define KS_MSG_KEY_EXCHANGE 0x00A
+/* Message IDs — Core */
+#define KS_MSG_HEARTBEAT        0x001
+#define KS_MSG_ATTITUDE         0x002
+#define KS_MSG_GPS_RAW          0x003
+#define KS_MSG_BATTERY          0x004
+#define KS_MSG_RC_INPUT         0x005
+#define KS_MSG_CMD              0x006
+#define KS_MSG_CMD_ACK          0x007
+#define KS_MSG_MODE_CHANGE      0x008
+#define KS_MSG_MISSION_ITEM     0x009
+#define KS_MSG_KEY_EXCHANGE     0x00A
 #define KS_MSG_KEY_EXCHANGE_ACK 0x00B
-#define KS_MSG_BATCH 0x3FF /* Special message ID for message batching */
+#define KS_MSG_BATCH            0x3FF /* Special message ID for message batching */
+
+/* Message IDs — v1.3 GCS Parity (MAVLink-compatible operations) */
+/* Parameter Protocol */
+#define KS_MSG_PARAM_REQUEST_READ  0x010 /* GCS → UAV: request one param by name/index  */
+#define KS_MSG_PARAM_REQUEST_LIST  0x011 /* GCS → UAV: request all params (stream all)  */
+#define KS_MSG_PARAM_VALUE         0x013 /* UAV → GCS: param value response             */
+#define KS_MSG_PARAM_SET           0x014 /* GCS → UAV: write a new param value          */
+/* Log Protocol */
+#define KS_MSG_LOG_REQUEST_LIST    0x015 /* GCS → UAV: list available log files         */
+#define KS_MSG_LOG_ENTRY           0x016 /* UAV → GCS: one log file descriptor          */
+#define KS_MSG_LOG_REQUEST_DATA    0x017 /* GCS → UAV: request a chunk of a log file    */
+#define KS_MSG_LOG_DATA            0x018 /* UAV → GCS: chunk of raw log data            */
+#define KS_MSG_LOG_ERASE           0x019 /* GCS → UAV: erase all logs (no payload)      */
+/* Status & HUD */
+#define KS_MSG_STATUSTEXT          0x01A /* UAV → GCS: human-readable status message    */
+#define KS_MSG_SYS_STATUS          0x01B /* UAV → GCS: sensor health + CPU + battery    */
+#define KS_MSG_VFR_HUD             0x01C /* UAV → GCS: HUD display telemetry            */
+#define KS_MSG_NAV_CONTROLLER      0x01D /* UAV → GCS: navigation PID controller output */
+/* Mission Protocol Completion */
+#define KS_MSG_MISSION_COUNT       0x01E /* Both dirs: total number of mission items     */
+#define KS_MSG_MISSION_REQUEST     0x01F /* UAV → GCS: request a specific waypoint      */
+#define KS_MSG_MISSION_ACK         0x022 /* UAV → GCS: mission upload complete/error    */
 
 /* --- Compliance Extension Message IDs --- */
 /* DO-362A: Link Quality Reporting */
@@ -207,22 +221,17 @@ typedef enum
     KS_PARSE_STATE_CRC
 } ks_parse_state_t;
 
-/* KS_PARSER_BUF_SIZE: internal packet buffer = payload + max header overhead.
- * Header overhead: 4 base + 15 ext + 16 MAC + 2 CRC = 37 bytes worst-case.
- * Add 1 byte margin -> 38. Buffer must fit the full raw packet off the wire. */
-#define KS_PARSER_BUF_SIZE (KS_MAX_PAYLOAD_SIZE + 38)
-
 typedef struct
 {
     ks_parse_state_t state;
-    uint8_t buffer[KS_PARSER_BUF_SIZE]; /* Raw incoming packet buffer         */
+    uint8_t buffer[512]; // Max packet size buffer
     uint16_t buf_idx;
     uint16_t expected_len;
-    uint16_t header_len; /* Store actual header length for AEAD               */
+    uint16_t header_len; // Store actual header length for AEAD
 
-    /* Extracted payload fields */
+    // Extracted payload fields
     ks_header_t header;
-    uint8_t payload[KS_MAX_PAYLOAD_SIZE]; /* Decrypted/plain payload buffer   */
+    uint8_t payload[512]; // Must match buffer[512] to prevent overflow
 
     /* Replay protection: 64-packet sliding window.
      * For encrypted packets, last_seq stores the 32-bit nonce counter, giving
@@ -417,15 +426,169 @@ typedef struct
 /* Mission item / waypoint (GCS -> UAV) */
 typedef struct
 {
-    uint16_t seq;         // Waypoint sequence number (0-based)
-    uint8_t frame;        // Coordinate frame (0=global, 1=relative)
-    uint8_t command;      // Waypoint action (0=navigate, 1=loiter, 2=land)
-    int32_t lat;          // Latitude (deg x 1e7)
-    int32_t lon;          // Longitude (deg x 1e7)
-    int32_t alt;          // Altitude (mm)
-    uint16_t speed;       // Desired speed (cm/s, 0 = default)
-    uint16_t loiter_time; // Loiter time at waypoint (seconds)
+    uint16_t seq;         /* Waypoint sequence number (0-based)              */
+    uint8_t  frame;       /* Coordinate frame (0=global, 1=relative)         */
+    uint8_t  command;     /* Waypoint action (0=navigate, 1=loiter, 2=land)  */
+    int32_t  lat;         /* Latitude (deg x 1e7)                            */
+    int32_t  lon;         /* Longitude (deg x 1e7)                           */
+    int32_t  alt;         /* Altitude (mm)                                   */
+    uint16_t speed;       /* Desired speed (cm/s, 0 = default)               */
+    uint16_t loiter_time; /* Loiter time at waypoint (seconds)               */
 } ks_mission_item_t;
+
+/* =========================================================================
+ * v1.3 GCS PARITY PAYLOAD STRUCTS
+ * ========================================================================= */
+
+/* --- Parameter Protocol --- */
+
+/* KS_MSG_PARAM_REQUEST_READ (0x010): GCS requests one parameter by name or index.
+ * Set param_index=-1 to search by param_id name string.
+ * Set param_index>=0 to fetch by numeric index. */
+typedef struct
+{
+    char    param_id[16]; /* Parameter name as null-padded ASCII (e.g. "ARMING_CHECK") */
+    int16_t param_index;  /* -1 = lookup by name, >=0 = lookup by index               */
+} ks_param_request_read_t; /* 18 bytes */
+
+/* KS_MSG_PARAM_REQUEST_LIST (0x011): GCS triggers full parameter dump.
+ * No payload — UAV will stream all parameters as KS_MSG_PARAM_VALUE messages. */
+/* No struct needed. Send with zero-length payload. */
+
+/* KS_MSG_PARAM_VALUE (0x013): UAV sends current value of one parameter.
+ * Sent in response to PARAM_REQUEST_READ, PARAM_REQUEST_LIST, or PARAM_SET. */
+typedef struct
+{
+    char     param_id[16];    /* Parameter name (null-padded ASCII)                    */
+    float    param_value;     /* Current value of the parameter                        */
+    uint8_t  param_type;      /* MAV_PARAM_TYPE: 1=uint8 4=int16 6=int32 9=float       */
+    uint16_t param_count;     /* Total number of parameters on the UAV                 */
+    uint16_t param_index;     /* This parameter's position in the full list            */
+} ks_param_value_t; /* 25 bytes */
+
+/* KS_MSG_PARAM_SET (0x014): GCS writes a new value to a named parameter.
+ * UAV MUST respond with KS_MSG_PARAM_VALUE confirming the written value. */
+typedef struct
+{
+    char    param_id[16];  /* Parameter name to modify                                */
+    float   param_value;   /* New value to write                                      */
+    uint8_t param_type;    /* MAV_PARAM_TYPE of the value being written               */
+} ks_param_set_t; /* 21 bytes */
+
+/* --- Log Protocol --- */
+
+/* KS_MSG_LOG_REQUEST_LIST (0x015): GCS requests list of available log files. */
+typedef struct
+{
+    uint16_t start; /* First log ID to include (0 = oldest)                           */
+    uint16_t end;   /* Last log ID to include (0xFFFF = all/newest)                   */
+} ks_log_request_list_t; /* 4 bytes */
+
+/* KS_MSG_LOG_ENTRY (0x016): UAV describes one log file entry. */
+typedef struct
+{
+    uint16_t id;           /* Log ID number (1-based)                                 */
+    uint16_t num_logs;     /* Total number of logs stored on the UAV                  */
+    uint16_t last_log_num; /* ID of the most recently written log                     */
+    uint32_t time_utc;     /* UTC timestamp when this log was created (0 if unknown)  */
+    uint32_t size;         /* Log file size in bytes                                  */
+} ks_log_entry_t; /* 14 bytes */
+
+/* KS_MSG_LOG_REQUEST_DATA (0x017): GCS requests a chunk of a specific log file. */
+typedef struct
+{
+    uint16_t id;     /* Log ID to download                                            */
+    uint32_t offset; /* Byte offset into the file to start reading from               */
+    uint32_t count;  /* Number of bytes requested (max 90 bytes per chunk)            */
+} ks_log_request_data_t; /* 10 bytes */
+
+/* KS_MSG_LOG_DATA (0x018): UAV streams one raw chunk of a log file to GCS. */
+typedef struct
+{
+    uint16_t id;       /* Log ID this data chunk belongs to                           */
+    uint32_t offset;   /* Byte offset in the file where this chunk starts             */
+    uint8_t  count;    /* Number of valid bytes in the data[] array (max 90)          */
+    uint8_t  data[90]; /* Raw log bytes                                               */
+} ks_log_data_t; /* 97 bytes */
+
+/* KS_MSG_LOG_ERASE (0x019): GCS commands the UAV to erase all stored logs.
+ * No payload — send with zero-length payload. */
+/* No struct needed. */
+
+/* --- Status and HUD Messages --- */
+
+/* KS_MSG_STATUSTEXT (0x01A): UAV sends a human-readable status message.
+ * Displayed in Mission Planner's Messages tab. */
+typedef struct
+{
+    uint8_t severity; /* MAV_SEVERITY: 0=Emergency 3=Error 4=Warning 6=Info 7=Debug  */
+    char    text[50]; /* Status message (null-terminated ASCII string)               */
+} ks_statustext_t; /* 51 bytes */
+
+/* KS_MSG_SYS_STATUS (0x01B): UAV sends overall system health at ~1 Hz. */
+typedef struct
+{
+    uint32_t sensors_present;   /* Bitmask of sensors that are installed on UAV       */
+    uint32_t sensors_enabled;   /* Bitmask of sensors that are currently active       */
+    uint32_t sensors_health;    /* Bitmask of sensors currently passing health checks */
+    uint16_t load;              /* CPU load x10 (e.g. 700 = 70.0%)                   */
+    uint16_t voltage_battery;   /* Battery voltage in mV (0 if unavailable)           */
+    int16_t  current_battery;   /* Battery current in cA (−1 if unavailable)          */
+    int8_t   battery_remaining; /* Remaining battery % (−1 if unavailable)            */
+    uint16_t drop_rate_comm;    /* Communication drop rate x100 (e.g. 500 = 5.00%)   */
+} ks_sys_status_t; /* 18 bytes */
+
+/* KS_MSG_VFR_HUD (0x01C): HUD telemetry for Mission Planner / QGroundControl. */
+typedef struct
+{
+    float    airspeed;    /* Indicated airspeed in m/s                               */
+    float    groundspeed; /* GPS ground speed in m/s                                 */
+    int16_t  heading;     /* Compass heading 0–359 degrees                           */
+    uint16_t throttle;    /* Throttle percentage 0–100                               */
+    float    alt;         /* Altitude above mean sea level (AMSL) in metres          */
+    float    climb;       /* Vertical speed in m/s (positive = climbing)            */
+} ks_vfr_hud_t; /* 20 bytes */
+
+/* KS_MSG_NAV_CONTROLLER (0x01D): Navigation PID controller output telemetry. */
+typedef struct
+{
+    float    nav_roll;         /* Current desired roll angle in degrees               */
+    float    nav_pitch;        /* Current desired pitch angle in degrees              */
+    int16_t  nav_bearing;      /* Current desired heading in degrees                  */
+    int16_t  target_bearing;   /* Bearing to current waypoint/target in degrees       */
+    uint16_t wp_dist;          /* Distance to active waypoint in metres               */
+    float    alt_error;        /* Altitude error above target in metres               */
+    float    aspd_error;       /* Airspeed error in m/s                               */
+    float    xtrack_error;     /* Crosstrack error in metres                          */
+} ks_nav_controller_t; /* 26 bytes */
+
+/* --- Mission Protocol Completion --- */
+
+/* KS_MSG_MISSION_COUNT (0x01E): Announces the total number of mission items.
+ * Sent by GCS before uploading waypoints, or by UAV when GCS requests mission download. */
+typedef struct
+{
+    uint16_t count;       /* Total number of mission items                           */
+    uint8_t  target_sys;  /* Target system ID                                        */
+    uint8_t  target_comp; /* Target component ID                                     */
+} ks_mission_count_t; /* 4 bytes */
+
+/* KS_MSG_MISSION_REQUEST (0x01F): UAV requests a specific mission item from the GCS. */
+typedef struct
+{
+    uint16_t seq;         /* Sequence number of the mission item being requested      */
+    uint8_t  target_sys;  /* Target system ID                                        */
+    uint8_t  target_comp; /* Target component ID                                     */
+} ks_mission_request_t; /* 4 bytes */
+
+/* KS_MSG_MISSION_ACK (0x022): Final handshake for mission upload or download. */
+typedef struct
+{
+    uint8_t target_sys;  /* Target system ID                                         */
+    uint8_t target_comp; /* Target component ID                                      */
+    uint8_t type;        /* Result: 0=ACCEPTED 1=ERROR 3=FULL 4=UNSUPPORTED          */
+    uint8_t reserved;    /* Reserved for future use, set to 0                        */
+} ks_mission_ack_t; /* 4 bytes */
 
 /* --- DGCA NPNT Permission Artifact (KS_MSG_NPNT_PA) --- */
 /* GCS pushes the PA to the UAV before arming. UAV verifies the Ed25519
@@ -563,6 +726,42 @@ int ks_deserialize_mode_change(ks_mode_change_t *mode, const uint8_t *payload_bu
 
 int ks_serialize_mission_item(const ks_mission_item_t *item, uint8_t *payload_buf);
 int ks_deserialize_mission_item(ks_mission_item_t *item, const uint8_t *payload_buf);
+
+/* v1.3: Parameter Protocol */
+int ks_serialize_param_request_read(const ks_param_request_read_t *req, uint8_t *payload_buf);
+int ks_deserialize_param_request_read(ks_param_request_read_t *req, const uint8_t *payload_buf);
+int ks_serialize_param_value(const ks_param_value_t *val, uint8_t *payload_buf);
+int ks_deserialize_param_value(ks_param_value_t *val, const uint8_t *payload_buf);
+int ks_serialize_param_set(const ks_param_set_t *set, uint8_t *payload_buf);
+int ks_deserialize_param_set(ks_param_set_t *set, const uint8_t *payload_buf);
+
+/* v1.3: Log Protocol */
+int ks_serialize_log_request_list(const ks_log_request_list_t *req, uint8_t *payload_buf);
+int ks_deserialize_log_request_list(ks_log_request_list_t *req, const uint8_t *payload_buf);
+int ks_serialize_log_entry(const ks_log_entry_t *entry, uint8_t *payload_buf);
+int ks_deserialize_log_entry(ks_log_entry_t *entry, const uint8_t *payload_buf);
+int ks_serialize_log_request_data(const ks_log_request_data_t *req, uint8_t *payload_buf);
+int ks_deserialize_log_request_data(ks_log_request_data_t *req, const uint8_t *payload_buf);
+int ks_serialize_log_data(const ks_log_data_t *data, uint8_t *payload_buf);
+int ks_deserialize_log_data(ks_log_data_t *data, const uint8_t *payload_buf);
+
+/* v1.3: Status & HUD */
+int ks_serialize_statustext(const ks_statustext_t *st, uint8_t *payload_buf);
+int ks_deserialize_statustext(ks_statustext_t *st, const uint8_t *payload_buf);
+int ks_serialize_sys_status(const ks_sys_status_t *sys, uint8_t *payload_buf);
+int ks_deserialize_sys_status(ks_sys_status_t *sys, const uint8_t *payload_buf);
+int ks_serialize_vfr_hud(const ks_vfr_hud_t *hud, uint8_t *payload_buf);
+int ks_deserialize_vfr_hud(ks_vfr_hud_t *hud, const uint8_t *payload_buf);
+int ks_serialize_nav_controller(const ks_nav_controller_t *nav, uint8_t *payload_buf);
+int ks_deserialize_nav_controller(ks_nav_controller_t *nav, const uint8_t *payload_buf);
+
+/* v1.3: Mission Protocol Completion */
+int ks_serialize_mission_count(const ks_mission_count_t *cnt, uint8_t *payload_buf);
+int ks_deserialize_mission_count(ks_mission_count_t *cnt, const uint8_t *payload_buf);
+int ks_serialize_mission_request(const ks_mission_request_t *req, uint8_t *payload_buf);
+int ks_deserialize_mission_request(ks_mission_request_t *req, const uint8_t *payload_buf);
+int ks_serialize_mission_ack(const ks_mission_ack_t *ack, uint8_t *payload_buf);
+int ks_deserialize_mission_ack(ks_mission_ack_t *ack, const uint8_t *payload_buf);
 
 /* DGCA NPNT Permission Artifact serialization */
 int ks_serialize_npnt_pa(const ks_npnt_pa_t *pa, uint8_t *payload_buf);
