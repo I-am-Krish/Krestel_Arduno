@@ -116,6 +116,21 @@ void loop() {
 | `HeartbeatSender` | Pack & transmit a heartbeat at 1 Hz | Any |
 | `HeartbeatReceiver` | Parse all message types, print to Serial Monitor | Any |
 | `EncryptedTelemetry` | Full AEAD encrypted attitude round-trip | ESP32 / ARM |
+| `KestrelPixhawkBridge_USB` | ESP32 proxy translating ArduPilot MAVLink to encrypted Kestrel over USB | ESP32 |
+
+## Included Tools
+
+### `kestrel_gcs_usb.py`
+A pure-Python GCS that communicates natively using the Kestrel protocol (no MAVLink) over USB. Use this to verify your hardware bridge:
+```bash
+python3 kestrel_gcs_usb.py
+```
+
+### `configure_pixhawk.py`
+A utility script to automatically configure a Pixhawk's `TELEM1` and `TELEM2` ports to stream MAVLink v2 at 57600 baud, which is required for the ESP32 bridge to function correctly.
+```bash
+python3 configure_pixhawk.py
+```
 
 ## Protocol Compatibility
 

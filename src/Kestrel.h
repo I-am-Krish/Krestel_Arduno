@@ -32,7 +32,7 @@ extern "C" {
 
 #include "kestrel_core.h"
 
-#ifndef KS_ARDUINO_NO_CRYPTO
+#if !defined(KS_ARDUINO_NO_CRYPTO) || !KS_ARDUINO_NO_CRYPTO
   #include "monocypher.h"
 #endif
 

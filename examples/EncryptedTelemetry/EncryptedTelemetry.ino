@@ -2,14 +2,17 @@
  * @file EncryptedTelemetry.ino
  * @brief Kestrel Library Example: Full ChaCha20-Poly1305 encrypted telemetry.
  *
- * Demonstrates AEAD-encrypted packet TX/RX on a single ESP32 in loopback
- * mode (Serial1 TX → Serial1 RX via hardware jumper, or using two ESP32s).
+ * Demonstrates AEAD-encrypted packet TX/RX in loopback mode
+ * (Serial1 TX → Serial1 RX via a hardware jumper wire).
  *
- * REQUIRES: ESP32, RP2040, SAMD, or ARM-based Arduino (NOT AVR Uno/Mega)
- *           KS_ARDUINO_NO_CRYPTO must be 0 (auto-set for ESP32)
+ * Board Support:
+ *   - ESP32 / RP2040 / SAMD / ARM : Full AEAD crypto (production)
+ *   - AVR Mega (testing only)      : Crypto enabled but slow (~120 ms/packet)
+ *   KS_ARDUINO_NO_CRYPTO must be 0 (auto-set for all boards in kestrel_arduino.h)
  *
- * Wiring (loopback on ESP32):
- *   GPIO17 (TX1) → GPIO16 (RX1) with a wire
+ * Wiring (loopback — required on ALL boards):
+ *   AVR Mega : Pin 18 (TX1) → Pin 19 (RX1)  with a single jumper wire
+ *   ESP32    : GPIO17 (TX1) → GPIO16 (RX1)  with a single jumper wire
  *
  * What it shows:
  *   - ks_session_init() for key + nonce state setup
@@ -21,10 +24,10 @@
 #include <Kestrel.h>
 
 /* -----------------------------------------------------------------------
- * Build guard: this example cannot run on AVR
+ * Build guard: abort if crypto is explicitly disabled
  * --------------------------------------------------------------------- */
 #if defined(KS_ARDUINO_NO_CRYPTO) && KS_ARDUINO_NO_CRYPTO
-  #error "EncryptedTelemetry requires crypto support. Use an ESP32, RP2040, or ARM board."
+  #error "EncryptedTelemetry requires crypto support. Set KS_ARDUINO_NO_CRYPTO=0 in kestrel_arduino.h."
 #endif
 
 /* -----------------------------------------------------------------------
@@ -42,20 +45,24 @@ static const uint8_t DEMO_KEY[32] = {
 static ks_session_t g_tx_session;   /* TX side session (manages nonce)  */
 static ks_session_t g_rx_session;   /* RX side session (same key)       */
 static ks_parser_t  g_parser;
-
 static uint16_t g_seq = 0;
 
 void setup() {
   Serial.begin(115200);
   while (!Serial) { ; }
-  Serial.println(F("=== Kestrel EncryptedTelemetry (ESP32) ==="));
-
+#if defined(__AVR__)
+  Serial.println(F("=== Kestrel EncryptedTelemetry (AVR Mega) ==="));
+  Serial.println(F("Wiring: connect Pin 18 (TX1) to Pin 19 (RX1) with a jumper wire!"));
+  /* Mega Hardware Serial1: TX=Pin 18, RX=Pin 19 (loopback jumper needed) */
+  Serial1.begin(115200);
+#else
+  Serial.println(F("=== Kestrel EncryptedTelemetry (32-bit) ==="));
   /* Hardware Serial1: TX=17, RX=16 (loopback jumper needed) */
   Serial1.begin(115200, SERIAL_8N1, 16, 17);
+#endif
 
-  /* Initialise TX session (seeds nonce from ESP32 hardware RNG) */
   if (ks_session_init(&g_tx_session, DEMO_KEY) != 0) {
-    Serial.println(F("ERROR: TX session init failed (CSPRNG?)"));
+    Serial.println(F("ERROR: TX session init failed"));
     while (1) { ; }
   }
 
@@ -72,7 +79,46 @@ void setup() {
 
 void loop() {
   /* -----------------------------------------------------------------------
+   * RX FIRST: drain any bytes that arrived during the previous cycle.
+   *
+   * KEY INSIGHT: Running RX before TX guarantees that the loopback bytes
+   * from the PREVIOUS TX have had the full 500 ms inter-packet delay to
+   * arrive and sit in the Serial1 RX buffer before we read them.
+   *
+   * If RX ran immediately after write() we would be checking too soon —
+   * at 115200 baud, 52 bytes take ~4.5 ms to transmit and loop back,
+   * but the code reaches Serial1.available() in only ~10 µs.
+   * --------------------------------------------------------------------- */
+  while (Serial1.available()) {
+    uint8_t c = (uint8_t)Serial1.read();
+
+    /* Pass g_rx_session.key to decrypt + verify MAC */
+    int result = ks_parse_char(&g_parser, c, g_rx_session.key);
+
+    if (result == KS_OK) {
+      if (g_parser.header.msg_id == KS_MSG_ATTITUDE) {
+        ks_attitude_t dec;
+        ks_deserialize_attitude(&dec, g_parser.payload);
+        Serial.print(F("[RX] Decrypted attitude: roll="));
+        Serial.print(dec.roll, 3);
+        Serial.print(F(" pitch="));
+        Serial.print(dec.pitch, 3);
+        Serial.print(F(" yaw="));
+        Serial.println(dec.yaw, 3);
+      }
+    } else if (result == KS_ERR_MAC_VERIFICATION) {
+      Serial.println(F("[RX] ERROR: MAC verification failed — wrong key or tampered packet!"));
+    } else if (result == KS_ERR_CRC) {
+      Serial.println(F("[RX] ERROR: CRC mismatch — check jumper wire connection"));
+    } else if (result == KS_ERR_REPLAY) {
+      Serial.println(F("[RX] ERROR: Replay attack detected"));
+    }
+  }
+
+  /* -----------------------------------------------------------------------
    * TX: build and send an encrypted attitude packet
+   * The loopback bytes will arrive during the delay(500) below and be
+   * waiting in Serial1's RX buffer at the top of the NEXT loop() call.
    * --------------------------------------------------------------------- */
   {
     ks_attitude_t att;
@@ -83,7 +129,7 @@ void loop() {
     att.pitchspeed =  0.005f;
     att.yawspeed   =  0.002f;
 
-    uint8_t payload[16];
+    uint8_t payload[18]; /* ks_serialize_attitude writes 18 bytes: 3×float32 + 3×float16 */
     int payload_len = ks_serialize_attitude(&att, payload);
 
     ks_header_t header;
@@ -109,32 +155,8 @@ void loop() {
     }
   }
 
-  /* -----------------------------------------------------------------------
-   * RX: drain Serial1 and parse any complete packets
-   * --------------------------------------------------------------------- */
-  while (Serial1.available()) {
-    uint8_t c = (uint8_t)Serial1.read();
-
-    /* Pass g_rx_session.key to decrypt + verify MAC */
-    int result = ks_parse_char(&g_parser, c, g_rx_session.key);
-
-    if (result == KS_OK) {
-      if (g_parser.header.msg_id == KS_MSG_ATTITUDE) {
-        ks_attitude_t dec;
-        ks_deserialize_attitude(&dec, g_parser.payload);
-        Serial.print(F("[RX] Decrypted attitude: roll="));
-        Serial.print(dec.roll, 3);
-        Serial.print(F(" pitch="));
-        Serial.print(dec.pitch, 3);
-        Serial.print(F(" yaw="));
-        Serial.println(dec.yaw, 3);
-      }
-    } else if (result == KS_ERR_MAC_VERIFICATION) {
-      Serial.println(F("[RX] ERROR: MAC verification failed — tampered or wrong key!"));
-    } else if (result == KS_ERR_CRC) {
-      Serial.println(F("[RX] ERROR: CRC mismatch"));
-    }
-  }
-
-  delay(500);  /* 2 Hz */
+  /* Loopback bytes will be fully received well before this delay expires.
+   * At 115200 baud, 52 bytes take only ~4.5 ms — the remaining ~495 ms
+   * ensures they are sitting in the RX buffer waiting at the next RX check. */
+  delay(500);
 }

@@ -1,5 +1,17 @@
-#include "kestrel_arduino.h"
-#if !defined(KS_CRYPTO_DISABLED) || !KS_CRYPTO_DISABLED
+/*
+ * IMPORTANT: Do NOT include kestrel_arduino.h (or any Arduino header) here.
+ * kestrel_arduino.h pulls in Arduino.h -> pins_arduino.h which defines:
+ *   static const uint8_t A2 = PIN_A2;
+ * This collides with monocypher's internal curve25519 constant at line ~968:
+ *   static const fe A2 = { ... };
+ * causing a "conflicting type qualifiers" compile error on AVR Mega.
+ *
+ * Crypto gate: if KS_ARDUINO_NO_CRYPTO is explicitly defined and non-zero
+ * (e.g. via -D build flag), skip the entire file to save flash.
+ * When not defined at all (normal Arduino IDE library build), the file
+ * compiles unconditionally — which is the correct default.
+ */
+#if !defined(KS_ARDUINO_NO_CRYPTO) || !KS_ARDUINO_NO_CRYPTO
 
 // Monocypher version 4.0.2
 //
@@ -2958,5 +2970,5 @@ int crypto_aead_unlock(u8 *plain_text, const u8  mac[16], const u8 key[32],
 }
 #endif
 
-#endif /* !KS_CRYPTO_DISABLED */
+#endif /* !KS_ARDUINO_NO_CRYPTO */
 

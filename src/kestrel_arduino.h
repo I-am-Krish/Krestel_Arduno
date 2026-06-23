@@ -30,7 +30,7 @@
       #define KS_FRAG_MAX_PAYLOAD   64
     #endif
     #ifndef KS_ARDUINO_NO_CRYPTO
-      #define KS_ARDUINO_NO_CRYPTO  1     /* Monocypher too large for AVR     */
+      #define KS_ARDUINO_NO_CRYPTO  0     /* ENABLED for AVR testing (monocypher is large; for production use 1) */
     #endif
     #ifndef KS_ARDUINO_NO_FRAG
       #define KS_ARDUINO_NO_FRAG    1     /* Fragmentation tables eat RAM     */
@@ -39,6 +39,10 @@
 
   /* --- ESP32 family ------------------------------------------------------ */
   #elif defined(ESP32)
+    /* esp_system.h declares esp_random() (hardware TRNG).
+     * Must be included here so kestrel.c can call it without an
+     * implicit-declaration error when compiled by the ESP32 Arduino core. */
+    #include <esp_system.h>
     #ifndef KS_MAX_PAYLOAD_SIZE
       #define KS_MAX_PAYLOAD_SIZE   256
     #endif

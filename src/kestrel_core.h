@@ -6,7 +6,14 @@
 #include <stddef.h>
 
 /* Protocol Constants */
+#ifndef KS_MAX_PAYLOAD_SIZE
 #define KS_MAX_PAYLOAD_SIZE 512 /* Maximum payload size in parser buffer */
+#endif
+
+#ifndef KS_PARSER_BUF_SIZE
+#define KS_PARSER_BUF_SIZE (KS_MAX_PAYLOAD_SIZE + 38)
+#endif
+
 #define KS_MAC_TAG_SIZE 16      /* Poly1305 MAC tag size (full 128-bit) */
 
 /* Error Codes */
@@ -224,14 +231,14 @@ typedef enum
 typedef struct
 {
     ks_parse_state_t state;
-    uint8_t buffer[512]; // Max packet size buffer
+    uint8_t buffer[KS_PARSER_BUF_SIZE]; // Max packet size buffer
     uint16_t buf_idx;
     uint16_t expected_len;
     uint16_t header_len; // Store actual header length for AEAD
 
     // Extracted payload fields
     ks_header_t header;
-    uint8_t payload[512]; // Must match buffer[512] to prevent overflow
+    uint8_t payload[KS_MAX_PAYLOAD_SIZE]; // Must match buffer size to prevent overflow
 
     /* Replay protection: 64-packet sliding window.
      * For encrypted packets, last_seq stores the 32-bit nonce counter, giving
@@ -630,7 +637,9 @@ typedef struct
 } ks_rid_location_t;
 
 /* --- Fragment Reassembly --- */
+#ifndef KS_FRAG_MAX_PAYLOAD
 #define KS_FRAG_MAX_PAYLOAD 256  // Max payload per fragment
+#endif
 #define KS_FRAG_MAX_FRAGMENTS 16 // Max fragments per message
 #define KS_FRAG_MAX_TOTAL 4096   // Max reassembled payload (256 * 16)
 #define KS_FRAG_TIMEOUT_MS 5000  // Reassembly timeout
