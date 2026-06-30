@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex 2026.6.18)  29 JUN 2026 16:52
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex 2026.6.18)  30 JUN 2026 10:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1136,313 +1136,447 @@ been already used, duplicate ignored
                    \relax 
 l.206 \newpage
                [1{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}]
-Underfull \hbox (badness 1320) in paragraph at lines 225--226
-[]|\T1/lmr/m/n/10.95 Initial wiring and firmware up-load.
+Underfull \hbox (badness 10000) in paragraph at lines 230--233
+[]|\T1/lmr/m/n/10.95 Initial scaf-fold of
  []
 
 
-Underfull \hbox (badness 4316) in paragraph at lines 236--238
-\T1/lmr/m/n/10.95 Kestrel pack-ets re-ceived, ATT:209
+Underfull \hbox (badness 10000) in paragraph at lines 230--233
+\T1/lmtt/m/n/10.95 KestrelPixhawkBridge_USB.ino \T1/lmr/m/n/10.95 cre-
  []
 
-[2] (./kestrel_pixhawk_integration_report.toc [3])
+
+Underfull \hbox (badness 10000) in paragraph at lines 235--238
+[]|\T1/lmr/m/n/10.95 MAVLink C li-brary head-ers in-te-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 235--238
+\T1/lmr/m/n/10.95 grated into the Ar-duino sketch.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 235--238
+\T1/lmtt/m/n/10.95 mavlink_parse_char() \T1/lmr/m/n/10.95 con-firmed op-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 240--244
+[]|\T1/lmr/m/n/10.95 Pixhawk TELEM1 port phys-i-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 240--244
+\T1/lmr/m/n/10.95 cally wired to ESP32 GPIO16/17.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 240--244
+\T1/lmr/m/n/10.95 SE-RIAL1_PROTOCOL and SE-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 246--251
+[]|\T1/lmr/m/n/10.95 Full MAVLink-to-Kestrel trans-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 246--251
+\T1/lmr/m/n/10.95 la-tion pipeline im-ple-mented:
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 246--251
+\T1/lmr/m/n/10.95 HEART-BEAT, AT-TI-TUDE, and
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 246--251
+\T1/lmr/m/n/10.95 GLOBAL_POSITION_INT mapped
+ []
+
+
+Underfull \hbox (badness 2103) in paragraph at lines 253--257
+\T1/lmr/m/n/10.95 vel-oped and in-te-grated. Byte-by-byte
+ []
+
+
+Underfull \hbox (badness 1571) in paragraph at lines 253--257
+\T1/lmr/m/n/10.95 in Python. \T1/lmtt/m/n/10.95 pycryptodome \T1/lmr/m/n/10.95 
+ChaCha20-
+ []
+
+
+Underfull \hbox (badness 1117) in paragraph at lines 259--263
+[]|\T1/lmr/m/n/10.95 Critical bug fixed: Python parser flag
+ []
+
+
+Underfull \hbox (badness 1033) in paragraph at lines 259--263
+\T1/lmr/m/n/10.95 fail de-cryp-tion. Root cause traced to
+ []
+
+
+Underfull \hbox (badness 5533) in paragraph at lines 265--271
+[]|\T1/lmr/m/n/10.95 SR0/SR1 stream rate pa-ram-e-ters set
+ []
+
+
+Underfull \hbox (badness 8189) in paragraph at lines 273--277
+[]|\T1/lmr/m/n/10.95 Full sys-tem in-te-gra-tion test-ing com-
+ []
+
+
+Underfull \hbox (badness 6910) in paragraph at lines 273--277
+\T1/lmr/m/n/10.95 pleted. 27 unique MAVLink mes-
+ []
+
+
+Underfull \hbox (badness 2435) in paragraph at lines 273--277
+\T1/lmr/m/n/10.95 e-ter val-ues read-back and ver-i-fied via
+ []
+
+ignored error: Infinite glue shrinkage found in box being split [2] [3{/usr/sha
+re/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}]
+(./kestrel_pixhawk_integration_report.toc [4])
 \tf@toc=\write5
 \openout5 = `kestrel_pixhawk_integration_report.toc'.
 
- [4]
-Overfull \hbox (63.4152pt too wide) in paragraph at lines 277--281
+ [5]
+Overfull \hbox (63.4152pt too wide) in paragraph at lines 324--328
 \T1/lmr/m/n/10.95 Kestrel pack-ets, de-crypted by the ESP32, and for-warded as 
 MAVLink \T1/lmtt/m/n/10.95 MAV_CMD_COMPONENT_ARM_DISARM
  []
 
-[5] [6]
-Underfull \hbox (badness 1270) in paragraph at lines 375--375
-[]|\T1/lmr/m/n/10.95 ArduPilot flight con-troller
+[6] [7]
+Underfull \hbox (badness 4819) in paragraph at lines 423--423
+[]|\T1/lmr/m/n/10.95 UAV au-topi-lot / teleme-try
  []
 
 
-Underfull \hbox (badness 2221) in paragraph at lines 375--375
-[]|\T1/lmr/m/n/10.95 USB to UART con-verter
+Underfull \hbox (badness 5878) in paragraph at lines 423--423
+[]|\T1/lmr/m/n/10.95 Dual-core 240MHz, 520KB
  []
 
 
-Underfull \hbox (badness 1442) in paragraph at lines 375--375
+Underfull \hbox (badness 5403) in paragraph at lines 423--423
+\T1/lmr/m/n/10.95 nect-ing the ESP32 De-vKit
+ []
+
+
+Underfull \hbox (badness 1199) in paragraph at lines 423--423
+[]|\T1/lmr/m/n/10.95 Pixhawk TELEM1 con-nec-tor
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 423--423
 []|\T1/lmr/m/n/10.95 Male-to-female bread-board
  []
 
+
+Underfull \hbox (badness 7047) in paragraph at lines 423--423
+[]|\T1/lmr/m/n/10.95 GPIO break-out con-nec-tions
+ []
+
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 442.
-[7] [8{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}]
-Underfull \hbox (badness 10000) in paragraph at lines 515--515
+(Font)              <5> on input line 540.
+[8] [9]
+Underfull \hbox (badness 10000) in paragraph at lines 665--665
 []|\T1/lmr/bx/n/10.95 MAVLink
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 515--515
+Underfull \hbox (badness 10000) in paragraph at lines 665--665
 []|\T1/lmr/bx/n/10.95 Kestrel
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 515--515
+Underfull \hbox (badness 10000) in paragraph at lines 665--665
 []|\T1/lmr/m/n/10.95 MAVLink
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 515--515
+Underfull \hbox (badness 10000) in paragraph at lines 665--665
 \T1/lmr/m/n/10.95 HEART-
  []
 
 
-Overfull \hbox (32.96288pt too wide) in paragraph at lines 515--515
+Overfull \hbox (32.96288pt too wide) in paragraph at lines 665--665
 []|\T1/lmtt/m/n/10.95 KS_MSG_HEARTBEAT| 
  []
 
 
-Overfull \hbox (27.21414pt too wide) in paragraph at lines 515--515
+Overfull \hbox (27.21414pt too wide) in paragraph at lines 665--665
 []|\T1/lmtt/m/n/10.95 KS_MSG_ATTITUDE| 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 515--515
+Underfull \hbox (badness 10000) in paragraph at lines 665--665
 []|\T1/lmr/m/n/10.95 Lat, Lon,
  []
 
 
-Overfull \hbox (21.46541pt too wide) in paragraph at lines 515--515
+Overfull \hbox (21.46541pt too wide) in paragraph at lines 665--665
 []|\T1/lmtt/m/n/10.95 KS_MSG_GPS_RAW| 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 515--515
+Underfull \hbox (badness 10000) in paragraph at lines 665--665
 []|\T1/lmr/m/n/10.95 Kestrel
  []
 
 
-Overfull \hbox (17.48135pt too wide) in paragraph at lines 515--515
+Overfull \hbox (17.48135pt too wide) in paragraph at lines 665--665
 \T1/lmr/m/n/10.95 ARM/DISARM| 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 515--515
+Underfull \hbox (badness 10000) in paragraph at lines 665--665
 []|\T1/lmr/m/n/10.95 MAVLink
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 515--515
+Underfull \hbox (badness 10000) in paragraph at lines 665--665
 \T1/lmr/m/n/10.95 Com-mand
  []
 
-[9] [10]
-Underfull \hbox (badness 3240) in paragraph at lines 605--605
+
+Underfull \hbox (badness 5622) in paragraph at lines 744--744
+[]\T1/lmr/m/n/10.95 Figure 3: |Kestrel Core Packet Wire For-mat (en-crypted, un
+-frag-mented vari-ant).
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 744--744
+\T1/lmr/bx/n/10.95 R\T1/lmr/m/n/10.95 =Reserved(0);\T1/lmr/bx/n/10.95 C\T1/lmr/
+m/n/10.95 =KS_FLAG_COMPRESSED (LZ4);\T1/lmr/bx/n/10.95 E\T1/lmr/m/n/10.95 =KS_F
+LAG_ENCRYPTED
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 744--744
+\T1/lmr/m/n/10.95 (ChaCha20-Poly1305);\T1/lmr/bx/n/10.95 F\T1/lmr/m/n/10.95 =KS
+_FLAG_FRAGMENTED.Abbreviations:
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 744--744
+\T1/lmr/bx/n/10.95 pr\T1/lmr/m/n/10.95 =prio,\T1/lmr/bx/n/10.95 s1\T1/lmr/m/n/1
+0.95 =strm[3:2],\T1/lmr/bx/n/10.95 s0\T1/lmr/m/n/10.95 =strm[1:0],\T1/lmr/bx/n/
+10.95 p0\T1/lmr/m/n/10.95 =plen[1:0],\T1/lmr/bx/n/10.95 sq\T1/lmr/m/n/10.95 =se
+q[11:10].Fields \T1/lmr/bx/n/10.95 plen\T1/lmr/m/n/10.95 , \T1/lmr/bx/n/10.95 s
+eq\T1/lmr/m/n/10.95 ,
+ []
+
+[10] [11] [12]
+Underfull \hbox (badness 3240) in paragraph at lines 828--828
 []|\T1/lmr/m/n/10.95 Kestrel pro-to-col fram-ing, se-ri-al-iza-tion,
  []
 
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 627.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 850.
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 630.
+nput line 853.
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <9> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 631.
-[11] [12] [13] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 854.
+[13] [14] [15] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2025/11/14 1.11b listings language file
 )
-[14] [15] [16]
-Overfull \hbox (3.99823pt too wide) in paragraph at lines 931--934
+[16] [17] [18]
+Overfull \hbox (3.99823pt too wide) in paragraph at lines 1154--1157
 []\T1/lmr/bx/n/10.95 Verify Pix-hawk Stream-ing (USB): \T1/lmr/m/n/10.95 Run a 
 12-second MAVLink snif-fer on \T1/lmtt/m/n/10.95 /dev/ttyACM0
  []
 
-[17] [18{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fo
-nts/enc/dvips/lm/lm-rm.enc}] [19] [20] [21]
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+[19] [20{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fo
+nts/enc/dvips/lm/lm-rm.enc}] [21] [22] [23]
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 []|\T1/lmr/m/n/10.95 ESP32 bridge
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 firmware.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 MAVLink
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 re-ceiver,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 Kestrel en-cryp-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 tor/transmitter,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 and Kestrel
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 com-mand re-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 ceiver/MAVLink
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 []|\T1/lmr/m/n/10.95 Pure-Python
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 Kestrel GCS.
  []
 
 
-Underfull \hbox (badness 1515) in paragraph at lines 1251--1251
+Underfull \hbox (badness 1515) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 Auto-port de-tec-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 ARM/DISARM
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 []|\T1/lmr/m/n/10.95 Pixhawk
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 MAVLink pa-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 ram-e-ter con-fig-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 u-ra-tion util-ity.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 Sets all SE-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 RIAL1/SERIAL2
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 and SR0/SR1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 stream rate
  []
 
 
-Underfull \hbox (badness 4634) in paragraph at lines 1251--1251
+Underfull \hbox (badness 4634) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 pa-ram-e-ters with
  []
 
 
-Overfull \hbox (2.44527pt too wide) in paragraph at lines 1251--1251
+Overfull \hbox (2.44527pt too wide) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 PARAM_VALUE
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 []|\T1/lmr/m/n/10.95 Updated to
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 doc-u-ment
  []
 
 
-Overfull \hbox (53.4232pt too wide) in paragraph at lines 1251--1251
+Overfull \hbox (53.4232pt too wide) in paragraph at lines 1474--1474
 \T1/lmtt/m/n/10.95 KestrelPixhawkBridge_USB
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1251--1251
+Underfull \hbox (badness 10000) in paragraph at lines 1474--1474
 \T1/lmr/m/n/10.95 and wiring in-
  []
 
-[22]
-Overfull \hbox (37.92317pt too wide) in paragraph at lines 1255--1257
+[24]
+Overfull \hbox (37.92317pt too wide) in paragraph at lines 1478--1480
 []\T1/lmr/m/n/10.95 Additionally, the fol-low-ing changes were made to the Pro-
 to-col repos-i-tory (\T1/lmtt/m/n/10.95 Monarch666/ProtocolV1\T1/lmr/m/n/10.95 
 ): 
  []
 
-[23]
-Overfull \hbox (4.324pt too wide) in paragraph at lines 1277--1281
+[25]
+Overfull \hbox (4.324pt too wide) in paragraph at lines 1500--1504
 \T1/lmr/m/n/10.95 The \T1/lmr/bx/n/10.95 KestrelPix-hawk-Bridge_USB \T1/lmr/m/n
 /10.95 in-te-gra-tion rep-re-sents a sig-nif-i-cant mile-stone in the Kestrel
  []
 
-[24]
-Overfull \hbox (3.72905pt too wide) in paragraph at lines 1394--1394
+[26]
+Overfull \hbox (3.72905pt too wide) in paragraph at lines 1617--1617
 []|[][]\T1/lmtt/m/n/10.95 I-am-Krish/Krestel_Arduno[][]| 
  []
 
-[25] (./kestrel_pixhawk_integration_report.aux)
+[27] (./kestrel_pixhawk_integration_report.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `kestrel_pixhawk_integration_report.out' has 
 not changed.
-(rerunfilecheck)             Checksum: D2746947EE1EA43D305DCEF23A606568;9652.
+(rerunfilecheck)             Checksum: A068BF9ED06FF5ED1DC5A65B011620BB;10454.
  ) 
 Here is how much of TeX's memory you used:
- 32181 strings out of 467533
- 633941 string characters out of 5422138
- 1681273 words of memory out of 5000000
- 60315 multiletter control sequences out of 15000+600000
- 690610 words of font info for 84 fonts, out of 8000000 for 9000
+ 32363 strings out of 467533
+ 637040 string characters out of 5422138
+ 1682816 words of memory out of 5000000
+ 60487 multiletter control sequences out of 15000+600000
+ 701177 words of font info for 88 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 98i,12n,108p,482b,2085s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 98i,12n,108p,779b,2085s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/ty
-pe1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi10.pfb></u
-sr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/pu
-blic/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr17.pfb></usr/share
-/texmf/fonts/type1/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/l
-mr9.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fo
-nts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy6.pf
-b></usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/typ
-e1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></us
-r/share/texmf/fonts/type1/public/lm/lmtt8.pfb></usr/share/texmf/fonts/type1/pub
-lic/lm/lmtt9.pfb>
-Output written on kestrel_pixhawk_integration_report.pdf (26 pages, 449525 byte
+pe1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx6.pfb></us
+r/share/texmf/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/pu
+blic/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share
+/texmf/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf/fonts/type1/public/lm/
+lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fon
+ts/type1/public/lm/lmr9.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb>
+</usr/share/texmf/fonts/type1/public/lm/lmri9.pfb></usr/share/texmf/fonts/type1
+/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy6.pfb></usr/s
+hare/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public
+/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/t
+exmf/fonts/type1/public/lm/lmtt8.pfb></usr/share/texmf/fonts/type1/public/lm/lm
+tt9.pfb>
+Output written on kestrel_pixhawk_integration_report.pdf (28 pages, 529139 byte
 s).
 PDF statistics:
- 748 PDF objects out of 1000 (max. 8388607)
- 671 compressed objects within 7 object streams
- 264 named destinations out of 1000 (max. 500000)
- 445 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 795 PDF objects out of 1000 (max. 8388607)
+ 709 compressed objects within 8 object streams
+ 271 named destinations out of 1000 (max. 500000)
+ 477 words of extra memory for PDF output out of 10000 (max. 10000000)
 

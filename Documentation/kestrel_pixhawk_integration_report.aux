@@ -4,102 +4,111 @@
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \@writefile{toc}{\contentsline {section}{Document Control}{1}{Doc-Start}\protected@file@percent }
 \gdef \LT@i {\LT@entry 
-    {1}{40.14322pt}\LT@entry 
-    {1}{91.6678pt}\LT@entry 
-    {1}{103.04872pt}\LT@entry 
-    {1}{190.9429pt}}
+    {1}{34.45274pt}\LT@entry 
+    {1}{85.97733pt}\LT@entry 
+    {1}{97.35826pt}\LT@entry 
+    {1}{210.85974pt}}
 \@writefile{toc}{\contentsline {section}{Revision History}{2}{table.caption.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{Abstract}{5}{table.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{6}{section.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Background and Motivation}{6}{subsection.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Objectives}{6}{subsection.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Scope}{6}{subsection.1.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2}Hardware Configuration}{7}{section.2}\protected@file@percent }
-\newlabel{sec:hardware}{{2}{7}{Hardware Configuration}{section.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Bill of Materials}{7}{subsection.2.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Hardware Components}}{7}{table.caption.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Physical Wiring}{7}{subsection.2.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Pixhawk TELEM1 to ESP32 Wiring Diagram}}{7}{table.caption.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Communication Topology}{7}{subsection.2.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces System Communication Topology: Pixhawk $\rightarrow $ ESP32 Bridge $\rightarrow $ PC GCS}}{8}{figure.caption.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Serial Port Configuration}{8}{subsection.2.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Serial Port Assignments}}{8}{table.caption.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}System Architecture}{9}{section.3}\protected@file@percent }
-\newlabel{sec:architecture}{{3}{9}{System Architecture}{section.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Design Overview: Protocol Translation and Cryptographic Firewall}{9}{subsection.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Message Translation Table}{9}{subsection.3.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces MAVLink to Kestrel Message Translation Mapping}}{9}{table.caption.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Data Flow Diagram}{9}{subsection.3.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces End-to-End Data Flow: Pixhawk IMU to GCS Display}}{9}{figure.caption.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Security Model}{10}{subsection.3.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Security Properties of the Kestrel GCS Link}}{10}{table.caption.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}ESP32 Bridge Firmware}{11}{section.4}\protected@file@percent }
-\newlabel{sec:firmware}{{4}{11}{ESP32 Bridge Firmware}{section.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}File}{11}{subsection.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Dependencies}{11}{subsection.4.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Firmware Library Dependencies}}{11}{table.caption.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Key Constants}{11}{subsection.4.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Firmware Configuration Constants}}{11}{table.caption.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Initialisation Sequence (\texttt  {setup()})}{11}{subsection.4.4}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}{\ignorespaces ESP32 Bridge Initialisation (setup())}}{11}{lstlisting.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Main Loop Logic (\texttt  {loop()})}{12}{subsection.4.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Kestrel Packet Transmission Helper}{12}{subsection.4.6}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}{\ignorespaces kestrel\_send() -- Encrypts and transmits a Kestrel packet to PC}}{12}{lstlisting.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}MAVLink ATTITUDE Translation}{12}{subsection.4.7}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}{\ignorespaces ATTITUDE message translation from MAVLink to Kestrel}}{12}{lstlisting.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Python Ground Control Station}{14}{section.5}\protected@file@percent }
-\newlabel{sec:gcs}{{5}{14}{Python Ground Control Station}{section.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}File}{14}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Overview}{14}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Packet Parser State Machine}{14}{subsection.5.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}{\ignorespaces Python Kestrel Parser -- Byte 3 flag bit decoding}}{14}{lstlisting.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Decryption and Authentication}{14}{subsection.5.4}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}{\ignorespaces ChaCha20-Poly1305 decryption of a Kestrel packet in Python}}{14}{lstlisting.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Terminal Output Format}{15}{subsection.5.5}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}{\ignorespaces Example GCS terminal output during live test session}}{15}{lstlisting.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{Abstract}{6}{table.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{7}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Background and Motivation}{7}{subsection.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Objectives}{7}{subsection.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Scope}{7}{subsection.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Hardware Configuration}{8}{section.2}\protected@file@percent }
+\newlabel{sec:hardware}{{2}{8}{Hardware Configuration}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Bill of Materials}{8}{subsection.2.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Hardware Components}}{8}{table.caption.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Physical Wiring}{8}{subsection.2.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Pixhawk TELEM1 to ESP32 Wiring Diagram}}{8}{table.caption.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Physical Pin Wiring: Pixhawk CubeOrange+ TELEM1 (JST-GH 6-pin) to ESP32 DevKit\,v1 UART2 GPIO. Signal wires are cross-connected (TX\,$\leftrightarrow $\,RX). Pins 1, 4, and 5 are left unconnected (N/C).}}{9}{figure.caption.4}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:wiring}{{1}{9}{Physical Pin Wiring: Pixhawk CubeOrange+ TELEM1 (JST-GH 6-pin) to ESP32 DevKit\,v1 UART2 GPIO. Signal wires are cross-connected (TX\,$\leftrightarrow $\,RX). Pins 1, 4, and 5 are left unconnected (N/C)}{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Communication Topology}{9}{subsection.2.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces System Communication Topology: Pixhawk CubeOrange+ $\rightarrow $ ESP32 Bridge $\rightarrow $ PC Kestrel GCS}}{9}{figure.caption.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Serial Port Configuration}{9}{subsection.2.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Serial Port Assignments}}{9}{table.caption.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}System Architecture}{10}{section.3}\protected@file@percent }
+\newlabel{sec:architecture}{{3}{10}{System Architecture}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Design Overview: Protocol Translation and Cryptographic Firewall}{10}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Message Translation Table}{10}{subsection.3.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces MAVLink to Kestrel Message Translation Mapping}}{10}{table.caption.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Kestrel Packet Wire Format}{10}{subsection.3.3}\protected@file@percent }
+\newlabel{sec:pktformat}{{3.3}{10}{Kestrel Packet Wire Format}{subsection.3.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Kestrel Core Packet Wire Format (encrypted, unfragmented variant). \textbf  {R}\,=\,Reserved(0);\enspace  \textbf  {C}\,=\,KS\_FLAG\_COMPRESSED (LZ4);\enspace  \textbf  {E}\,=\,KS\_FLAG\_ENCRYPTED (ChaCha20-Poly1305);\enspace  \textbf  {F}\,=\,KS\_FLAG\_FRAGMENTED.\enspace  Abbreviations: \textbf  {pr}\,=\,prio,\enspace  \textbf  {s1}\,=\,strm[3:2],\enspace  \textbf  {s0}\,=\,strm[1:0],\enspace  \textbf  {p0}\,=\,plen[1:0],\enspace  \textbf  {sq}\,=\,seq[11:10].\enspace  Fields \textbf  {plen}, \textbf  {seq}, and \textbf  {strm} are split across bytes per the Kestrel Core Spec Section~3.1.}}{11}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:pktformat}{{3}{11}{Kestrel Core Packet Wire Format (encrypted, unfragmented variant). \textbf {R}\,=\,Reserved(0);\enspace \textbf {C}\,=\,KS\_FLAG\_COMPRESSED (LZ4);\enspace \textbf {E}\,=\,KS\_FLAG\_ENCRYPTED (ChaCha20-Poly1305);\enspace \textbf {F}\,=\,KS\_FLAG\_FRAGMENTED.\enspace Abbreviations: \textbf {pr}\,=\,prio,\enspace \textbf {s1}\,=\,strm[3:2],\enspace \textbf {s0}\,=\,strm[1:0],\enspace \textbf {p0}\,=\,plen[1:0],\enspace \textbf {sq}\,=\,seq[11:10].\enspace Fields \textbf {plen}, \textbf {seq}, and \textbf {strm} are split across bytes per the Kestrel Core Spec Section~3.1}{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1}Base Header (4 Bytes)}{11}{subsubsection.3.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2}Extended Header (4 Bytes)}{11}{subsubsection.3.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3}Security Fields}{11}{subsubsection.3.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.4}Payload and Integrity Check}{12}{subsubsection.3.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Security Model}{12}{subsection.3.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Security Properties of the Kestrel GCS Link}}{12}{table.caption.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}ESP32 Bridge Firmware}{13}{section.4}\protected@file@percent }
+\newlabel{sec:firmware}{{4}{13}{ESP32 Bridge Firmware}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}File}{13}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Dependencies}{13}{subsection.4.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Firmware Library Dependencies}}{13}{table.caption.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Key Constants}{13}{subsection.4.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Firmware Configuration Constants}}{13}{table.caption.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Initialisation Sequence (\texttt  {setup()})}{13}{subsection.4.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}{\ignorespaces ESP32 Bridge Initialisation (setup())}}{13}{lstlisting.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Main Loop Logic (\texttt  {loop()})}{14}{subsection.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Kestrel Packet Transmission Helper}{14}{subsection.4.6}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}{\ignorespaces kestrel\_send() -- Encrypts and transmits a Kestrel packet to PC}}{14}{lstlisting.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}MAVLink ATTITUDE Translation}{14}{subsection.4.7}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}{\ignorespaces ATTITUDE message translation from MAVLink to Kestrel}}{14}{lstlisting.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Python Ground Control Station}{16}{section.5}\protected@file@percent }
+\newlabel{sec:gcs}{{5}{16}{Python Ground Control Station}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}File}{16}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Overview}{16}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Packet Parser State Machine}{16}{subsection.5.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}{\ignorespaces Python Kestrel Parser -- Byte 3 flag bit decoding}}{16}{lstlisting.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Decryption and Authentication}{16}{subsection.5.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}{\ignorespaces ChaCha20-Poly1305 decryption of a Kestrel packet in Python}}{16}{lstlisting.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Terminal Output Format}{17}{subsection.5.5}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}{\ignorespaces Example GCS terminal output during live test session}}{17}{lstlisting.6}\protected@file@percent }
 \gdef \LT@ii {\LT@entry 
     {1}{134.0374pt}\LT@entry 
     {1}{42.85725pt}\LT@entry 
     {1}{219.39566pt}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Pixhawk Configuration Utility}{16}{section.6}\protected@file@percent }
-\newlabel{sec:config}{{6}{16}{Pixhawk Configuration Utility}{section.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}File}{16}{subsection.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Purpose}{16}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Parameters Configured}{16}{subsection.6.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Test Procedure and Results}{17}{section.7}\protected@file@percent }
-\newlabel{sec:testing}{{7}{17}{Test Procedure and Results}{section.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Test Environment}{17}{subsection.7.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Test Environment Summary}}{17}{table.caption.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Test Procedure}{17}{subsection.7.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Test Results: Pixhawk USB Stream Verification}{17}{subsection.7.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces MAVLink Message Counts on Pixhawk USB Port (12-second window)}}{18}{table.caption.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Test Results: End-to-End Kestrel Bridge (Final Validation)}{18}{subsection.7.4}\protected@file@percent }
-\newlabel{sec:finalresults}{{7.4}{18}{Test Results: End-to-End Kestrel Bridge (Final Validation)}{subsection.7.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces End-to-End Kestrel Bridge Validation Results (June 23, 2026)}}{18}{table.caption.13}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8}Live Session Telemetry Output}{19}{section.8}\protected@file@percent }
-\newlabel{sec:liveoutput}{{8}{19}{Live Session Telemetry Output}{section.8}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}{\ignorespaces Verbatim GCS Session Output -- June 23, 2026}}{19}{lstlisting.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9}Bugs Discovered and Corrected During Integration}{20}{section.9}\protected@file@percent }
-\newlabel{sec:bugs}{{9}{20}{Bugs Discovered and Corrected During Integration}{section.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Bug 1 -- Python Parser: Incorrect Flag Bit Extraction}{20}{subsection.9.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.1.1}Root Cause}{20}{subsubsection.9.1.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}{\ignorespaces Incorrect flag extraction (before fix)}}{20}{lstlisting.8}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}{\ignorespaces Correct flag extraction (after fix)}}{20}{lstlisting.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}Bug 2 -- Python GCS: Incorrect MAV\_TYPE Enumeration}{20}{subsection.9.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.1}Root Cause}{20}{subsubsection.9.2.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}{\ignorespaces MAV\_TYPE table correction}}{20}{lstlisting.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Bug 3 -- Kestrel Header: Missing Compressed Flag in Documentation}{20}{subsection.9.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.4}Bug 4 -- Pixhawk Stream Rates: All SR1\_* Parameters Were Zero}{21}{subsection.9.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.4.1}Root Cause}{21}{subsubsection.9.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {10}Parameter Verification Record}{22}{section.10}\protected@file@percent }
-\newlabel{sec:params}{{10}{22}{Parameter Verification Record}{section.10}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Pixhawk Parameter Verification Record (June 23, 2026)}}{22}{table.caption.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {11}Deliverables}{22}{section.11}\protected@file@percent }
-\newlabel{sec:deliverables}{{11}{22}{Deliverables}{section.11}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Integration Deliverables}}{23}{table.caption.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {12}Conclusion}{24}{section.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A}Acronyms and Abbreviations}{25}{appendix.A}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Acronyms and Abbreviations}}{25}{table.caption.16}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {B}Related Documents}{25}{appendix.B}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {16}{\ignorespaces Related Documents and References}}{25}{table.caption.17}\protected@file@percent }
-\gdef \@abspage@last{26}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Pixhawk Configuration Utility}{18}{section.6}\protected@file@percent }
+\newlabel{sec:config}{{6}{18}{Pixhawk Configuration Utility}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}File}{18}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Purpose}{18}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Parameters Configured}{18}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Test Procedure and Results}{19}{section.7}\protected@file@percent }
+\newlabel{sec:testing}{{7}{19}{Test Procedure and Results}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Test Environment}{19}{subsection.7.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Test Environment Summary}}{19}{table.caption.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Test Procedure}{19}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Test Results: Pixhawk USB Stream Verification}{19}{subsection.7.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces MAVLink Message Counts on Pixhawk USB Port (12-second window)}}{20}{table.caption.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Test Results: End-to-End Kestrel Bridge (Final Validation)}{20}{subsection.7.4}\protected@file@percent }
+\newlabel{sec:finalresults}{{7.4}{20}{Test Results: End-to-End Kestrel Bridge (Final Validation)}{subsection.7.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces End-to-End Kestrel Bridge Validation Results (June 23, 2026)}}{20}{table.caption.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Live Session Telemetry Output}{21}{section.8}\protected@file@percent }
+\newlabel{sec:liveoutput}{{8}{21}{Live Session Telemetry Output}{section.8}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}{\ignorespaces Verbatim GCS Session Output -- June 23, 2026}}{21}{lstlisting.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Bugs Discovered and Corrected During Integration}{22}{section.9}\protected@file@percent }
+\newlabel{sec:bugs}{{9}{22}{Bugs Discovered and Corrected During Integration}{section.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Bug 1 -- Python Parser: Incorrect Flag Bit Extraction}{22}{subsection.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.1.1}Root Cause}{22}{subsubsection.9.1.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}{\ignorespaces Incorrect flag extraction (before fix)}}{22}{lstlisting.8}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}{\ignorespaces Correct flag extraction (after fix)}}{22}{lstlisting.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}Bug 2 -- Python GCS: Incorrect MAV\_TYPE Enumeration}{22}{subsection.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.1}Root Cause}{22}{subsubsection.9.2.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}{\ignorespaces MAV\_TYPE table correction}}{22}{lstlisting.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Bug 3 -- Kestrel Header: Missing Compressed Flag in Documentation}{22}{subsection.9.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.4}Bug 4 -- Pixhawk Stream Rates: All SR1\_* Parameters Were Zero}{23}{subsection.9.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.4.1}Root Cause}{23}{subsubsection.9.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Parameter Verification Record}{24}{section.10}\protected@file@percent }
+\newlabel{sec:params}{{10}{24}{Parameter Verification Record}{section.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Pixhawk Parameter Verification Record (June 23, 2026)}}{24}{table.caption.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {11}Deliverables}{24}{section.11}\protected@file@percent }
+\newlabel{sec:deliverables}{{11}{24}{Deliverables}{section.11}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Integration Deliverables}}{25}{table.caption.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12}Conclusion}{26}{section.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A}Acronyms and Abbreviations}{27}{appendix.A}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Acronyms and Abbreviations}}{27}{table.caption.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {B}Related Documents}{27}{appendix.B}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {16}{\ignorespaces Related Documents and References}}{27}{table.caption.18}\protected@file@percent }
+\gdef \@abspage@last{28}

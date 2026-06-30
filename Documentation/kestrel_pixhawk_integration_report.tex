@@ -745,6 +745,35 @@ shows the complete wire format for an \textbf{encrypted, unfragmented} packet
     \label{fig:pktformat}
 \end{figure}
 
+The Kestrel Core packet is structured into a densely bit-packed header, an optional extended header, security fields, the payload, and an integrity check. For this integration, the ESP32 bridge applies the following structural guarantees to all telemetry packets:
+
+\subsubsection{Base Header (4 Bytes)}
+The first 4 bytes provide framing, stream identification, and routing flags:
+\begin{itemize}[noitemsep]
+    \item \textbf{Byte 0 (SOF):} Fixed synchronization marker \texttt{0xA5}.
+    \item \textbf{Byte 1--3 (Packed Fields):} Compactly stores the 12-bit payload length, 2-bit priority, 4-bit stream type, 12-bit sequence number, and boolean flags. Notably, the \textbf{Encrypted (E)} flag is always set to 1, indicating ChaCha20-Poly1305 AEAD is active. Fragmentation (F) and Compression (C) are unused in this specific bridge configuration.
+\end{itemize}
+
+\subsubsection{Extended Header (4 Bytes)}
+The extended header immediately follows the base header and provides logical identification details:
+\begin{itemize}[noitemsep]
+    \item \textbf{System ID (6 bits) \& Component ID (4 bits):} Uniquely identifies the source node (the UAV or GCS) and its sub-components within the maximum 64-node limit.
+    \item \textbf{Message ID (12 bits):} Defines the structure of the enclosed payload. The bridge maps translated MAVLink telemetry frames to equivalent Kestrel Message IDs (e.g., MAVLink \texttt{HEARTBEAT} $\rightarrow$ \texttt{KS\_MSG\_HEARTBEAT} (0x001)).
+\end{itemize}
+
+\subsubsection{Security Fields}
+Because every Kestrel packet transmitted over USB by the bridge is authenticated and encrypted, the following cryptographic fields are uniformly present:
+\begin{itemize}[noitemsep]
+    \item \textbf{Nonce (8 Bytes):} Injected before the encrypted payload. The first 4 bytes constitute a strictly monotonic counter to reject replay attacks, while the remaining 4 bytes supply CSPRNG-derived random entropy.
+    \item \textbf{MAC Tag (16 Bytes):} The 128-bit Poly1305 authentication tag appended after the ciphertext. It authenticates both the header (serving as Associated Authenticated Data) and the payload. Packets failing MAC validation are silently dropped.
+\end{itemize}
+
+\subsubsection{Payload and Integrity Check}
+\begin{itemize}[noitemsep]
+    \item \textbf{Encrypted Payload (0--4095 Bytes):} The application data (e.g., Roll/Pitch/Yaw parameters) encrypted via the ChaCha20 stream cipher XOR keystream.
+    \item \textbf{CRC-16 (2 Bytes):} A trailing CRC-16/MCRF4XX checksum, seeded with a unique Message-ID offset. This guarantees rapid, unencrypted structural integrity validation before the parser commits CPU cycles to the expensive Poly1305 MAC verification step.
+\end{itemize}
+
 \subsection{Security Model}
 
 \begin{table}[H]
